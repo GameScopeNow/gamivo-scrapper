@@ -1,28 +1,32 @@
 const axios = require('axios');
-const cheerio = require('cheerio');
 
 exports.handler = async function(event, context) {
-    // Obtener el término de búsqueda desde la URL query string
     const searchTerm = event.queryStringParameters.search;
     const url = `https://www.gamivo.com/search/${encodeURIComponent(searchTerm)}`;
 
-    try {
-        const response = await axios.get(url);
-        const $ = cheerio.load(response.data);
-        // Asumiendo que queremos el precio del primer producto listado en los resultados de búsqueda
-        const price = $('.current-price__value').first().text().trim();
+    console.log("Fetching URL:", url);  // Log the URL being accessed
 
+    try {
+        const response = await axios.get(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+            }
+        });
+        console.log("Fetched Successfully");  // Log to confirm the page was fetched
+
+        // Return the complete HTML body for inspection
         return {
             statusCode: 200,
-            body: JSON.stringify({price}),
+            body: response.data,
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'text/html'
             }
         };
     } catch (error) {
+        console.error("Error fetching the page:", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Failed to fetch price' })
+            body: JSON.stringify({ error: 'Failed to fetch the page' })
         };
     }
 };

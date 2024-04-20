@@ -4,7 +4,7 @@ const cheerio = require('cheerio');
 exports.handler = async function(event, context) {
     // Obtener el título del juego desde la URL query string
     const gameTitle = event.queryStringParameters.title;
-    const url = `https://www.gamivo.com/product/${encodeURIComponent(gameTitle)}`;
+    const url = `https://www.gamivo.com/search/${encodeURIComponent(gameTitle)}`;
 
     try {
         const response = await axios.get(url);
